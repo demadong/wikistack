@@ -1,11 +1,11 @@
 var express = require('express'),
 	morgan = require('morgan'),
 	bodyParser = require('body-parser'),
-	swig = require('swig')
+	swig = require('swig');
 
-var PORT = 1337,
+var PORT = 3000,
 	app = express(),
-	routes = require('./routes/');
+	wikiRouter = require('./routes/wiki.js');
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 // dynamic routing
-app.use('/', routes);
+app.use('/wiki', wikiRouter);
 
 // static routing
 app.use(express.static(__dirname + '/public'));
