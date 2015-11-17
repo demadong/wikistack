@@ -20,7 +20,8 @@ router.post('/', function(req, res, next) {
   // make sure we only redirect *after* our save is complete!
   // note: `.save` returns a promise or it can take a callback.
   page.save().then(function(savedPage){
-  	res.redirect(savedPage.urlTitle);
+  	console.log(savedPage);
+  	res.redirect(savedPage.route);
   }).then(null, next);
   // -> after save -> res.redirect('/');
 });

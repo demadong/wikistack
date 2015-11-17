@@ -21,23 +21,20 @@ var userSchema = new Schema({
 	email:  {type: String, unique: true, required: true}
 });
 
+pageSchema.virtual('route').get(function () {
+  return '/wiki/' + this.urlTitle;
+});
+
 var Page = mongoose.model('Page', pageSchema);
 var User = mongoose.model('User', userSchema);
 
 pageSchema.pre('validate', function (next) {
-	console.log("Inside the pre-vaidate");
-	console.log(this.urlTitle);
 	if (this.title) {
 	  this.urlTitle = this.title.replace(/\s+/g, '_').replace(/\W/g, '');
 	} else {
 	  this.urlTitle = Math.random().toString(36).substring(2, 7);
 	}
-	console.log("Replaced This.Title: ", this.urlTitle);
 	next();
-});
-
-pageSchema.virtual('urlTitle.route').get(function () {
-  return '/wiki/' + this.urlTitle;
 });
 
 module.exports = {
