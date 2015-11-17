@@ -13,31 +13,38 @@ var pageSchema = new Schema({
   content:  {type: String, required: true},
   date:     {type: Date, default: Date.now},
   status:   {type: String, enum: ['open', 'closed']},
-  author:   {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+  author:   {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  tags:     [String]
 });
 
 var userSchema = new Schema({
-	name:   {type: String, required: true},
-	email:  {type: String, unique: true, required: true}
+  name:   {type: String, required: true},
+  email:  {type: String, unique: true, required: true}
 });
 
 pageSchema.virtual('route').get(function () {
   return '/wiki/' + this.urlTitle;
 });
 
+
 var Page = mongoose.model('Page', pageSchema);
 var User = mongoose.model('User', userSchema);
 
+pageSchema.statics.findByTag = function(tag){
+    return this.find({ tags: {$elemMatch: { $eq: tag }}}).exec()
+};
+
+
 pageSchema.pre('validate', function (next) {
-	if (this.title) {
-	  this.urlTitle = this.title.replace(/\s+/g, '_').replace(/\W/g, '');
-	} else {
-	  this.urlTitle = Math.random().toString(36).substring(2, 7);
-	}
-	next();
+  if (this.title) {
+    this.urlTitle = this.title.replace(/\s+/g, '_').replace(/\W/g, '');
+  } else {
+    this.urlTitle = Math.random().toString(36).substring(2, 7);
+  }
+  next();
 });
 
 module.exports = {
-	Page: Page,
-	User: User
+  Page: Page,
+  User: User
 };

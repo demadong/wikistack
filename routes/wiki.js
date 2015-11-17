@@ -1,27 +1,30 @@
 var express = require('express'),
-	router = express.Router(),
-	models = require('../models/'),
-	Page = models.Page,
-	User = models.User;
+  router = express.Router(),
+  models = require('../models/'),
+  Page = models.Page,
+  User = models.User;
 
 router.get('/', function(req, res, next) {
   res.redirect('/');
 });
 
 router.post('/', function(req, res, next) {
+  var tagsArray = req.body.tags.split(' ');
+  console.log()
   var page = new Page({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    tags: tagsArray
     // status: req.body.status,
   });
-  console.log(page.title, page.content);
+  console.log(page.title, page.content, page.tags);
 
   // STUDENT ASSIGNMENT:
   // make sure we only redirect *after* our save is complete!
   // note: `.save` returns a promise or it can take a callback.
   page.save().then(function(savedPage){
-  	console.log(savedPage);
-  	res.redirect(savedPage.route);
+    console.log(savedPage);
+    res.redirect(savedPage.route);
   }).then(null, next);
   // -> after save -> res.redirect('/');
 });
@@ -31,9 +34,9 @@ router.get('/add', function(req, res, next) {
 });
 
 router.get('/:urlTitle', function(req, res, next) {
-	Page.findOne({urlTitle: req.params.urlTitle}).exec().then(function(page){
-		res.render('wikipage', {page:page});
-	})
+  Page.findOne({urlTitle: req.params.urlTitle}).exec().then(function(page){
+    res.render('wikipage', {page:page});
+  })
 });
 
 module.exports = router;

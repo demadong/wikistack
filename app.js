@@ -1,11 +1,13 @@
 var express = require('express'),
-	morgan = require('morgan'),
-	bodyParser = require('body-parser'),
-	swig = require('swig');
+  morgan = require('morgan'),
+  bodyParser = require('body-parser'),
+  swig = require('swig');
+  require('./filters')(swig);
 
 var PORT = 3000,
-	app = express(),
-	wikiRouter = require('./routes/wiki.js');
+  app = express(),
+  wikiRouter = require('./routes/wiki.js'),
+  indexRouter = require('./routes/index.js');
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
@@ -23,6 +25,10 @@ app.use('/wiki', wikiRouter);
 // static routing
 app.use(express.static(__dirname + '/public'));
 
+
+app.use('/', indexRouter);
+
+
 //error handling middleware
 app.use(function(req, res, next){
   var err = new Error('could not find route');
@@ -36,5 +42,5 @@ app.use(function(err, req, res, next){ // 4 params -> error-handling middleware
 });
 
 app.listen(PORT, function() {
-	console.log('Listening to port', PORT);
+  console.log('Listening to port', PORT);
 });
